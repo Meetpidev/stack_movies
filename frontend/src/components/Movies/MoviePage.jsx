@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getAllMovies } from "../../api/Movie_api/getAllmovie";
 import "./MoviePage.css";
+import { Link } from "react-router-dom";
 
 const MoviePage = () => {
   const [movies, setMovies] = useState([]);
@@ -9,7 +10,7 @@ const MoviePage = () => {
     const fetchMovies = async () => {
       try {
         const movies = await getAllMovies();
-        console.log("Fetched movies:", movies); // Add this line
+        console.log("Fetched movies:", movies);
         setMovies(movies);
       } catch (error) {
         console.error("Error fetching movies:", error);
@@ -21,24 +22,15 @@ const MoviePage = () => {
 
   return (
     <div className="movie-page">
-      <h1>Season 1</h1>
-      <div className="movie-list">
+      <div className="movie-grid">
         {movies.map((movie) => (
-          <div key={movie._id} className="movie-card">
-            <img src={movie.image} alt={movie.title} />
-            <h2>{movie.title}</h2>
-            <p>{movie.description}</p>
-            <div className="movie-buttons">
-              <button className="play-now">Play Now</button>
-              <button className="watch-trailer">Watch Trailer</button>
-              <button className="watch-prime">Watch with Prime</button>
-              <button className="thumbs-up">👍</button>
-              <button className="thumbs-down">👎</button>
-              <button className="add-to-list">+</button>
-              <button className="download">⬇️</button>
-              <button className="share">🔗</button>
+          <Link to={`/movie/${movie._id}`} key={movie._id} className="movie-card-link">
+            <div className="movie-card">
+              <div className="movie-card-header">
+                <img src={movie.image} alt={movie.title} className="movie-image" />
+              </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>
