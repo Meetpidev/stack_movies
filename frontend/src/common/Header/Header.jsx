@@ -70,6 +70,7 @@ function Header() {
   const [filteredMovies, setFilteredMovies] = useState(movies);
   const [newTimeSlot, setNewTimeSlot] = useState('');
   const userEmail = localStorage.getItem('userEmail') || '';
+  const userName = localStorage.getItem('userName') || '';
   const userInitial = userEmail ? userEmail.charAt(0).toUpperCase() : '';
   const userType = localStorage.getItem('userType') || '';
   console.log('type', userType);
@@ -611,11 +612,11 @@ function Header() {
             <Drawer anchor="left" open={openDrawer} onClose={toggleDrawer}>
               <Box
                 sx={{
-                  width: 280,
+                  width: '350px',
                   padding: 2,
-                  backgroundColor: '#white',
+                  backgroundColor: '#333',
                   height: '100%',
-                  color: 'black',
+                  color: 'white',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
@@ -634,7 +635,7 @@ function Header() {
                     component={Link}
                     to="/"
                     sx={{
-                      color: 'black',
+                      color: 'white',
                       fontWeight: '400',
                       fontSize: '16px',
                       placeItems: 'start',
@@ -643,9 +644,10 @@ function Header() {
                       alignItems: 'center',
                       justifyContent: 'flex-start',
                       minHeight: '50px',
-                      '&:hover .MuiTab-root ': {
-                        backgroundColor: 'darkblue', // Darken the button when hovered
-                        transform: 'scale(1.25)', // Slightly enlarges the button
+                      '&:hover': {
+                        backgroundColor: '#fff',
+                        scale: '1.05',
+                        color: '#1b1b1b',
                       },
                       '&.Mui-selected': {
                         backgroundColor: 'blue',
@@ -661,7 +663,7 @@ function Header() {
                     component={Link}
                     to="/theater"
                     sx={{
-                      color: 'black',
+                      color: 'white',
                       fontWeight: '400',
                       fontSize: '16px',
                       placeItems: 'start',
@@ -669,12 +671,14 @@ function Header() {
                       alignItems: 'center',
                       justifyContent: 'flex-start',
                       minHeight: '50px',
+                      '&:hover': {
+                        backgroundColor: '#fff',
+                        scale: '1.05',
+                        color: '#1b1b1b',
+                      },
                       '&.Mui-selected': {
                         backgroundColor: 'blue',
                         color: 'white',
-                      },
-                      '&:hover': {
-                        scale: '1.05',
                       },
                     }}
                     icon={<TheatersIcon />}
@@ -686,7 +690,7 @@ function Header() {
                     component={Link}
                     to="/movie"
                     sx={{
-                      color: 'black',
+                      color: 'white',
                       fontWeight: '400',
                       fontSize: '16px',
                       placeItems: 'start',
@@ -694,6 +698,11 @@ function Header() {
                       alignItems: 'center',
                       justifyContent: 'flex-start',
                       minHeight: '50px',
+                      '&:hover': {
+                        backgroundColor: '#fff',
+                        scale: '1.05',
+                        color: '#1b1b1b',
+                      },
                       '&.Mui-selected': {
                         backgroundColor: 'blue',
                         color: 'white',
@@ -709,7 +718,7 @@ function Header() {
                         label="Add Your Theater"
                         onClick={handleOpenTheaterDialog}
                         sx={{
-                          color: 'black',
+                          color: 'white',
                           fontWeight: '400',
                           fontSize: '16px',
                           alignSelf: 'start',
@@ -719,6 +728,11 @@ function Header() {
                           justifyContent: 'flex-start',
                           minHeight: '50px',
                           paddingRight: '0px',
+                          '&:hover': {
+                            backgroundColor: '#fff',
+                            scale: '1.05',
+                            color: '#1b1b1b',
+                          },
                           '&.Mui-selected': {
                             backgroundColor: 'blue',
                             color: 'white',
@@ -731,7 +745,7 @@ function Header() {
                         label="Add Movie"
                         onClick={handleOpenMovieDialog}
                         sx={{
-                          color: 'black',
+                          color: 'white',
                           fontWeight: '400',
                           fontSize: '16px',
                           placeItems: 'start',
@@ -739,6 +753,11 @@ function Header() {
                           alignItems: 'center',
                           justifyContent: 'flex-start',
                           minHeight: '50px',
+                          '&:hover': {
+                            backgroundColor: '#fff',
+                            scale: '1.05',
+                            color: '#1b1b1b',
+                          },
                           '&.Mui-selected': {
                             backgroundColor: 'blue',
                             color: 'white',
@@ -759,49 +778,99 @@ function Header() {
                 >
                   {userInitial ? (
                     <Box
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="space-around"
-                      mt={2}
+                      sx={{
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '12px 8px',
+                        borderRadius: '8px',
+                      }}
                     >
+                      {/* Left Side - User Avatar & Info */}
                       <Box
                         sx={{
-                          width: 50,
-                          height: 50,
                           display: 'flex',
                           alignItems: 'center',
-                          justifyContent: 'center',
-                          borderRadius: '50%',
-                          backgroundColor: '#1b1b1b',
-                          color: 'white',
-                          fontWeight: 'bold',
-                          textTransform: 'uppercase',
-                          marginBottom: 1,
-                          cursor: 'pointer',
-                        }}
-                        onClick={() => {
-                          toggleDrawer();
-                          if (userType === 'Admin') {
-                            navigate('/admin');
-                          } else if (userType === 'User') {
-                            navigate('/user');
-                          }
+                          gap: 2, // Space between avatar & text
                         }}
                       >
-                        {userInitial}
+                        {/* User Initial Avatar */}
+                        <Box
+                          sx={{
+                            width: 40,
+                            height: 40,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: '50%',
+                            backgroundColor: '#333',
+                            color: 'white',
+                            backgroundColor: '#1b1b1b',
+                            fontWeight: 'bold',
+                            textTransform: 'uppercase',
+                            cursor: 'pointer',
+                            transition: 'background-color 0.3s, color 0.3s',
+                            '&:hover': {
+                              backgroundColor: '#fff',
+                              scale: '1.05',
+                              color: '#1b1b1b',
+                            },
+                          }}
+                          onClick={() => {
+                            toggleDrawer();
+                            if (userType === 'Admin') {
+                              navigate('/admin');
+                            } else if (userType === 'User') {
+                              navigate('/user');
+                            }
+                          }}
+                        >
+                          {userInitial}
+                        </Box>
+
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontWeight: 'bold',
+                              fontSize: '14px',
+                              color: 'white',
+                            }}
+                          >
+                            {userName}
+                          </span>
+                          <span style={{ fontSize: '12px', color: 'gray' }}>
+                            {userEmail}
+                          </span>
+                        </Box>
                       </Box>
+
                       <Button
                         variant="outlined"
                         sx={{
-                          color: 'black',
-                          borderColor: 'white',
-                          fontWeight: '400',
-                          fontSize: '50px',
-                          placeItems: 'start',
+                          color: 'white',
+                          borderColor: '#555',
+                          minWidth: '40px',
+                          height: '40px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          padding: 0,
+                          '&:hover': {
+                            backgroundColor: '#fff',
+                            scale: '1.05',
+                            color: '#1b1b1b',
+                          },
                         }}
                         onClick={handleLogout}
                       >
-                        <LogoutIcon fontSize="30px" />
+                        <LogoutIcon fontSize="medium" />
                       </Button>
                     </Box>
                   ) : (
@@ -810,7 +879,7 @@ function Header() {
                       component={Link}
                       to="/register"
                       sx={{
-                        color: 'black',
+                        color: 'white',
                         fontWeight: '400',
                         fontSize: '16px',
                         placeItems: 'start',
@@ -818,6 +887,9 @@ function Header() {
                         alignItems: 'center',
                         justifyContent: 'flex-start',
                         minHeight: '50px',
+                        '&:hover': {
+                          scale: '1.05',
+                        },
                         '&.Mui-selected': {
                           backgroundColor: 'blue',
                           color: 'white',
