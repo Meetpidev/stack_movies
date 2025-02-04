@@ -11,6 +11,13 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import SearchIcon from '@mui/icons-material/Search';
+import HomeIcon from '@mui/icons-material/Home';
+import LiveTvIcon from '@mui/icons-material/LiveTv';
+import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
+import MovieIcon from '@mui/icons-material/Movie';
+import LogoutIcon from '@mui/icons-material/Logout';
+import TheatersIcon from '@mui/icons-material/Theaters';
+import TheatersTwoToneIcon from '@mui/icons-material/TheatersTwoTone';
 import MenuIcon from '@mui/icons-material/Menu';
 import InputBase from '@mui/material/InputBase';
 import TextField from '@mui/material/TextField';
@@ -63,6 +70,7 @@ function Header() {
   const [filteredMovies, setFilteredMovies] = useState(movies);
   const [newTimeSlot, setNewTimeSlot] = useState('');
   const userEmail = localStorage.getItem('userEmail') || '';
+  const userName = localStorage.getItem('userName') || '';
   const userInitial = userEmail ? userEmail.charAt(0).toUpperCase() : '';
   const userType = localStorage.getItem('userType') || '';
   console.log('type', userType);
@@ -101,6 +109,7 @@ function Header() {
 
   const handleOpenTheaterDialog = () => {
     setOpenTheaterDialog(true); // Open Theater dialog
+    setOpenDrawer(!openDrawer);
   };
 
   const handleCloseTheaterDialog = () => {
@@ -109,6 +118,7 @@ function Header() {
 
   const handleOpenMovieDialog = () => {
     setOpenMovieDialog(true); // Open the movie dialog
+    setOpenDrawer(!openDrawer);
   };
 
   const handleCloseMovieDialog = () => {
@@ -589,7 +599,7 @@ function Header() {
               </Snackbar>
             )}
           </Box>
-          <Box display={'flex'} marginLeft={'auto'} sx={{ cursor: 'pointer' }}>
+          <Box display={'flex'} marginLeft={'auto'} cursor={'pointer'}>
             {/* Hamburger Icon for small screens */}
             <IconButton
               sx={{ display: { xs: 'block', md: 'block', lg: 'none' } }}
@@ -602,11 +612,15 @@ function Header() {
             <Drawer anchor="left" open={openDrawer} onClose={toggleDrawer}>
               <Box
                 sx={{
-                  width: 250,
+                  width: '350px',
                   padding: 2,
                   backgroundColor: '#333',
                   height: '100%',
                   color: 'white',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  overflow: 'hidden',
                 }}
               >
                 <Tabs
@@ -620,72 +634,243 @@ function Header() {
                     label="Home"
                     component={Link}
                     to="/"
-                    sx={{ color: 'white' }}
+                    sx={{
+                      color: 'white',
+                      fontWeight: '400',
+                      fontSize: '16px',
+                      placeItems: 'start',
+                      padingBottom: '10px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'flex-start',
+                      minHeight: '50px',
+                      '&:hover': {
+                        backgroundColor: '#fff',
+                        scale: '1.05',
+                        color: '#1b1b1b',
+                      },
+                      '&.Mui-selected': {
+                        backgroundColor: 'blue',
+                        color: 'white',
+                      },
+                    }}
+                    icon={<HomeIcon />}
+                    iconPosition="start"
+                    onClick={toggleDrawer}
                   />
                   <Tab
                     label="Theater"
                     component={Link}
                     to="/theater"
-                    sx={{ color: 'white' }}
+                    sx={{
+                      color: 'white',
+                      fontWeight: '400',
+                      fontSize: '16px',
+                      placeItems: 'start',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'flex-start',
+                      minHeight: '50px',
+                      '&:hover': {
+                        backgroundColor: '#fff',
+                        scale: '1.05',
+                        color: '#1b1b1b',
+                      },
+                      '&.Mui-selected': {
+                        backgroundColor: 'blue',
+                        color: 'white',
+                      },
+                    }}
+                    icon={<TheatersIcon />}
+                    iconPosition="start"
+                    onClick={toggleDrawer}
                   />
                   <Tab
                     label="Movies"
                     component={Link}
                     to="/movie"
-                    sx={{ color: 'white' }}
+                    sx={{
+                      color: 'white',
+                      fontWeight: '400',
+                      fontSize: '16px',
+                      placeItems: 'start',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'flex-start',
+                      minHeight: '50px',
+                      '&:hover': {
+                        backgroundColor: '#fff',
+                        scale: '1.05',
+                        color: '#1b1b1b',
+                      },
+                      '&.Mui-selected': {
+                        backgroundColor: 'blue',
+                        color: 'white',
+                      },
+                    }}
+                    icon={<LiveTvIcon />}
+                    iconPosition="start"
+                    onClick={toggleDrawer}
                   />
                   {userType === 'Admin' && (
-                    <Box>
+                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                       <Tab
                         label="Add Your Theater"
                         onClick={handleOpenTheaterDialog}
-                        sx={{ color: 'white' }}
+                        sx={{
+                          color: 'white',
+                          fontWeight: '400',
+                          fontSize: '16px',
+                          alignSelf: 'start',
+                          display: 'flex',
+                          marginBottom: '10px',
+                          alignItems: 'center',
+                          justifyContent: 'flex-start',
+                          minHeight: '50px',
+                          paddingRight: '0px',
+                          '&:hover': {
+                            backgroundColor: '#fff',
+                            scale: '1.05',
+                            color: '#1b1b1b',
+                          },
+                          '&.Mui-selected': {
+                            backgroundColor: 'blue',
+                            color: 'white',
+                          },
+                        }}
+                        icon={<TheatersTwoToneIcon />}
+                        iconPosition="start"
                       />
                       <Tab
                         label="Add Movie"
                         onClick={handleOpenMovieDialog}
-                        sx={{ color: 'white' }}
+                        sx={{
+                          color: 'white',
+                          fontWeight: '400',
+                          fontSize: '16px',
+                          placeItems: 'start',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'flex-start',
+                          minHeight: '50px',
+                          '&:hover': {
+                            backgroundColor: '#fff',
+                            scale: '1.05',
+                            color: '#1b1b1b',
+                          },
+                          '&.Mui-selected': {
+                            backgroundColor: 'blue',
+                            color: 'white',
+                          },
+                        }}
+                        icon={<MovieIcon />}
+                        iconPosition="start"
                       />
                     </Box>
                   )}
+                </Tabs>
+                <Tabs
+                  value={value}
+                  textColor="inherit"
+                  indicatorColor="secondary"
+                  onChange={(e, val) => setValue(val)}
+                  orientation="vertical"
+                >
                   {userInitial ? (
                     <Box
-                      display="flex"
-                      flexDirection="column"
-                      alignItems="center"
-                      mt={2}
+                      sx={{
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '12px 8px',
+                        borderRadius: '8px',
+                      }}
                     >
+                      {/* Left Side - User Avatar & Info */}
                       <Box
                         sx={{
-                          width: 40,
-                          height: 40,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 2, // Space between avatar & text
+                        }}
+                      >
+                        {/* User Initial Avatar */}
+                        <Box
+                          sx={{
+                            width: 40,
+                            height: 40,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: '50%',
+                            backgroundColor: '#333',
+                            color: 'white',
+                            backgroundColor: '#1b1b1b',
+                            fontWeight: 'bold',
+                            textTransform: 'uppercase',
+                            cursor: 'pointer',
+                            transition: 'background-color 0.3s, color 0.3s',
+                            '&:hover': {
+                              backgroundColor: '#fff',
+                              scale: '1.05',
+                              color: '#1b1b1b',
+                            },
+                          }}
+                          onClick={() => {
+                            toggleDrawer();
+                            if (userType === 'Admin') {
+                              navigate('/admin');
+                            } else if (userType === 'User') {
+                              navigate('/user');
+                            }
+                          }}
+                        >
+                          {userInitial}
+                        </Box>
+
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontWeight: 'bold',
+                              fontSize: '14px',
+                              color: 'white',
+                            }}
+                          >
+                            {userName}
+                          </span>
+                          <span style={{ fontSize: '12px', color: 'gray' }}>
+                            {userEmail}
+                          </span>
+                        </Box>
+                      </Box>
+
+                      <Button
+                        variant="outlined"
+                        sx={{
+                          color: 'white',
+                          borderColor: '#555',
+                          minWidth: '40px',
+                          height: '40px',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          borderRadius: '50%',
-                          backgroundColor: '#1b1b1b',
-                          color: 'white',
-                          fontWeight: 'bold',
-                          textTransform: 'uppercase',
-                          marginBottom: 1,
-                          cursor: 'pointer',
+                          padding: 0,
+                          '&:hover': {
+                            backgroundColor: '#fff',
+                            scale: '1.05',
+                            color: '#1b1b1b',
+                          },
                         }}
-                        onClick={() => {
-                          if (userType === 'Admin') {
-                            navigate('/admin');
-                          } else if (userType === 'User') {
-                            navigate('/user');
-                          }
-                        }}
-                      >
-                        {userInitial}
-                      </Box>
-                      <Button
-                        variant="outlined"
-                        sx={{ color: 'white', borderColor: 'white' }}
                         onClick={handleLogout}
                       >
-                        Logout
+                        <LogoutIcon fontSize="medium" />
                       </Button>
                     </Box>
                   ) : (
@@ -693,7 +878,25 @@ function Header() {
                       label="Sign Up"
                       component={Link}
                       to="/register"
-                      sx={{ color: 'white' }}
+                      sx={{
+                        color: 'white',
+                        fontWeight: '400',
+                        fontSize: '16px',
+                        placeItems: 'start',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'flex-start',
+                        minHeight: '50px',
+                        '&:hover': {
+                          scale: '1.05',
+                        },
+                        '&.Mui-selected': {
+                          backgroundColor: 'blue',
+                          color: 'white',
+                        },
+                      }}
+                      icon={<AppRegistrationIcon />}
+                      iconPosition="start"
                     />
                   )}
                 </Tabs>
