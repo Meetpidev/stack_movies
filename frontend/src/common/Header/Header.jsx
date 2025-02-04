@@ -11,6 +11,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import SearchIcon from '@mui/icons-material/Search';
+import MenuIcon from '@mui/icons-material/Menu';
 import InputBase from '@mui/material/InputBase';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
@@ -22,6 +23,7 @@ import {
   alpha,
   Card,
   CardContent,
+  Drawer,
   Grid,
   List,
   ListItem,
@@ -65,8 +67,13 @@ function Header() {
   const userType = localStorage.getItem('userType') || '';
   console.log('type', userType);
   const inputRef = useRef(null);
+  const [openDrawer, setOpenDrawer] = useState(false); // Drawer state
 
   const navigate = useNavigate();
+
+  const toggleDrawer = () => {
+    setOpenDrawer(!openDrawer);
+  };
 
   useEffect(() => {
     const fetchAllMovies = async () => {
@@ -314,14 +321,29 @@ function Header() {
     <>
       <AppBar position="sticky" sx={{ background: 'black' }}>
         <Toolbar>
-          <Box width={'10%'}>
-            <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
-              width="153pt" height="30pt" viewBox="0 0 1537.000000 357.000000"
-              preserveAspectRatio="xMidYMid meet">
+          <Box
+            width={'10%'}
+            sx={{
+              '@media (max-width: 400px)': {
+                display: 'none',
+              },
+            }}
+          >
+            <svg
+              version="1.0"
+              xmlns="http://www.w3.org/2000/svg"
+              width="113pt"
+              height="30pt"
+              viewBox="0 0 1537.000000 357.000000"
+              preserveAspectRatio="xMidYMid meet"
+            >
               <rect width="100%" height="100%" fill="#f0f0f0" />
-              <g transform="translate(0.000000,357.000000) scale(0.100000,-0.100000)"
-                stroke="none">
-                <path d="M0 1785 l0 -1785 7685 0 7685 0 0 1785 0 1785 -7685 0 -7685 0 0
+              <g
+                transform="translate(0.000000,357.000000) scale(0.100000,-0.100000)"
+                stroke="none"
+              >
+                <path
+                  d="M0 1785 l0 -1785 7685 0 7685 0 0 1785 0 1785 -7685 0 -7685 0 0
          -1785z m2292 1576 c549 -119 1000 -516 1174 -1036 63 -190 77 -277 78 -495 1
          -151 -3 -218 -18 -295 -119 -637 -599 -1128 -1240 -1267 -85 -19 -133 -22
          -306 -23 -178 0 -219 3 -314 23 -394 85 -743 309 -969 623 -76 107 -183 316
@@ -364,8 +386,10 @@ function Header() {
          c-3 502 -4 518 -24 557 -65 126 -244 119 -441 -17 l-43 -29 0 -514 0 -515
          -120 0 -120 0 0 669 0 670 58 6 c31 3 64 8 72 9 8 2 36 4 62 5 l47 1 3 -102z
          m-5622 -603 l0 -655 -115 0 -115 0 0 644 0 644 93 10 c50 5 102 10 115 11 l22
-         1 0 -655z"/>
-                <path d="M2509 2883 c154 -156 257 -341 319 -572 22 -85 25 -116 26 -276 1
+         1 0 -655z"
+                />
+                <path
+                  d="M2509 2883 c154 -156 257 -341 319 -572 22 -85 25 -116 26 -276 1
          -157 -2 -191 -22 -265 -48 -177 -156 -355 -280 -459 -188 -157 -453 -240 -674
          -212 -293 38 -515 206 -603 457 -36 105 -45 267 -20 364 60 231 262 390 495
          390 126 0 206 -36 298 -134 125 -133 160 -311 86 -447 -33 -59 -75 -99 -147
@@ -374,15 +398,18 @@ function Header() {
          99 298 279 309 501 6 131 -14 225 -75 347 -135 269 -441 425 -762 389 -591
          -68 -956 -639 -785 -1231 100 -344 380 -632 725 -744 227 -74 532 -67 771 19
          489 176 787 652 738 1179 -38 409 -243 757 -565 956 -43 27 -82 49 -86 49 -4
-         0 18 -26 50 -57z"/>
+         0 18 -26 50 -57z"
+                />
               </g>
             </svg>
-
           </Box>
           <Box
             sx={{
-              maxWidth: { xs: '100%', sm: '50%', md: '30%' },
+              maxWidth: { xs: '60%', sm: '70%', md: '70%', lg: '30%' },
               width: '100%',
+              '@media (max-width: 400px)': {
+                maxWidth: '90%',
+              },
             }}
           >
             <Box
@@ -390,9 +417,17 @@ function Header() {
                 position: 'relative',
                 display: 'flex',
                 alignItems: 'center',
-                width: '100%',
+                width: '70%',
                 height: '40px',
-                marginLeft : '50px'
+                marginLeft: {
+                  lg: '70px',
+                  md: '100px',
+                  sm: '150px',
+                  xs: '135px',
+                },
+                '@media (max-width: 400px)': {
+                  marginLeft: '50px',
+                },
               }}
             >
               <TextField
@@ -445,7 +480,7 @@ function Header() {
                   sx={{
                     width: '100%', // Full width relative to the parent
                     zIndex: 9999,
-                    minWidth: '300px',
+                    minWidth: '200px',
                     position: 'absolute',
                     top: 'calc(100% + 8px)', // Position below the search bar
                     left: '0', // Align with the left edge of the search bar
@@ -454,14 +489,21 @@ function Header() {
                     borderRadius: '8px',
                     boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
                     maxHeight: '400px',
+                    maxWidth: { xs: '60%', sm: '70%', md: '70%', lg: '100%' },
+                    marginLeft: {
+                      lg: '70px',
+                      md: '100px',
+                      sm: '150px',
+                      xs: '135px',
+                    },
                     overflowY: 'auto', // Ensures scrollability
                     padding: 0,
                     '&::-webkit-scrollbar': {
                       display: 'none', // Hides the scrollbar
                     },
-                    '@media (max-width: 600px)': {
-                      maxWidth: '90%', // Adjust width for smaller screens
-                      left: '5%', // Center it for mobile
+                    '@media (max-width: 400px)': {
+                      maxWidth: '70%',
+                      marginLeft: '55px',
                     },
                   }}
                 >
@@ -548,91 +590,199 @@ function Header() {
             )}
           </Box>
           <Box display={'flex'} marginLeft={'auto'} sx={{ cursor: 'pointer' }}>
-            <Tabs
-              value={value}
-
-              textColor="inherit"
-              indicatorColor="secondary"
-              onChange={(e, val) => setValue(val)}
+            {/* Hamburger Icon for small screens */}
+            <IconButton
+              sx={{ display: { xs: 'block', md: 'block', lg: 'none' } }}
+              onClick={toggleDrawer}
             >
-              <Tab
-                label="Home"
-                component={Link}
-                to="/"
-                sx={{ color: 'white' }}
-              />
-              <Tab
-                label="Theater"
-                component={Link}
-                to="/theater"
-                sx={{ color: 'white' }}
-              />
-              <Tab
-                label="Movies"
-                component={Link}
-                to="/movie"
-                sx={{ color: 'white' }}
-              />
-              {userType === 'Admin' && (
-                <Box>
+              <MenuIcon sx={{ color: 'white' }} />
+            </IconButton>
+
+            {/* Drawer for small screens */}
+            <Drawer anchor="left" open={openDrawer} onClose={toggleDrawer}>
+              <Box
+                sx={{
+                  width: 250,
+                  padding: 2,
+                  backgroundColor: '#333',
+                  height: '100%',
+                  color: 'white',
+                }}
+              >
+                <Tabs
+                  value={value}
+                  textColor="inherit"
+                  indicatorColor="secondary"
+                  onChange={(e, val) => setValue(val)}
+                  orientation="vertical"
+                >
                   <Tab
-                    label="Add Your Theater"
-                    onClick={handleOpenTheaterDialog}
+                    label="Home"
+                    component={Link}
+                    to="/"
                     sx={{ color: 'white' }}
                   />
                   <Tab
-                    label="Add Movie"
-                    onClick={handleOpenMovieDialog}
+                    label="Theater"
+                    component={Link}
+                    to="/theater"
                     sx={{ color: 'white' }}
-                  />{' '}
-                  {/* New Tab for adding movie */}
-                </Box>
-              )}
-
-              {userInitial ? (
-                <Box display="flex" alignItems="center">
-                  <Box
-                    sx={{
-                      width: 40,
-                      height: 40,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderRadius: '50%',
-                      backgroundColor: '#1b1b1b',
-                      color: 'white',
-                      fontWeight: 'bold',
-                      textTransform: 'uppercase',
-                      marginRight: 2,
-                      cursor: 'pointer',
-                    }}
-                    onClick={() => {
-                      if (userType === 'Admin') {
-                        navigate('/admin');
-                      } else if (userType === 'User') {
-                        navigate('/user');
-                      }
-                    }}
-                  >
-                    {userInitial}
-                  </Box>
-                  <Button
-                    variant="outlined"
-                    sx={{ color: 'white', borderColor: 'white' }}
-                    onClick={handleLogout}
-                  >
-                    Logout
-                  </Button>
-                </Box>
-              ) : (
+                  />
+                  <Tab
+                    label="Movies"
+                    component={Link}
+                    to="/movie"
+                    sx={{ color: 'white' }}
+                  />
+                  {userType === 'Admin' && (
+                    <Box>
+                      <Tab
+                        label="Add Your Theater"
+                        onClick={handleOpenTheaterDialog}
+                        sx={{ color: 'white' }}
+                      />
+                      <Tab
+                        label="Add Movie"
+                        onClick={handleOpenMovieDialog}
+                        sx={{ color: 'white' }}
+                      />
+                    </Box>
+                  )}
+                  {userInitial ? (
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      alignItems="center"
+                      mt={2}
+                    >
+                      <Box
+                        sx={{
+                          width: 40,
+                          height: 40,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          borderRadius: '50%',
+                          backgroundColor: '#1b1b1b',
+                          color: 'white',
+                          fontWeight: 'bold',
+                          textTransform: 'uppercase',
+                          marginBottom: 1,
+                          cursor: 'pointer',
+                        }}
+                        onClick={() => {
+                          if (userType === 'Admin') {
+                            navigate('/admin');
+                          } else if (userType === 'User') {
+                            navigate('/user');
+                          }
+                        }}
+                      >
+                        {userInitial}
+                      </Box>
+                      <Button
+                        variant="outlined"
+                        sx={{ color: 'white', borderColor: 'white' }}
+                        onClick={handleLogout}
+                      >
+                        Logout
+                      </Button>
+                    </Box>
+                  ) : (
+                    <Tab
+                      label="Sign Up"
+                      component={Link}
+                      to="/register"
+                      sx={{ color: 'white' }}
+                    />
+                  )}
+                </Tabs>
+              </Box>
+            </Drawer>
+            <Box sx={{ display: { xs: 'none', md: 'none', lg: 'block' } }}>
+              <Tabs
+                value={value}
+                textColor="inherit"
+                indicatorColor="secondary"
+                onChange={(e, val) => setValue(val)}
+              >
                 <Tab
-                  label="Sign Up"
+                  label="Home"
                   component={Link}
-                  to="/register"
+                  to="/"
                   sx={{ color: 'white' }}
                 />
-              )}
-            </Tabs>
+                <Tab
+                  label="Theater"
+                  component={Link}
+                  to="/theater"
+                  sx={{ color: 'white' }}
+                />
+                <Tab
+                  label="Movies"
+                  component={Link}
+                  to="/movie"
+                  sx={{ color: 'white' }}
+                />
+                {userType === 'Admin' && (
+                  <Box>
+                    <Tab
+                      label="Add Your Theater"
+                      onClick={handleOpenTheaterDialog}
+                      sx={{ color: 'white' }}
+                    />
+                    <Tab
+                      label="Add Movie"
+                      onClick={handleOpenMovieDialog}
+                      sx={{ color: 'white' }}
+                    />
+                  </Box>
+                )}
+                {userInitial ? (
+                  <Box display="flex" alignItems="center">
+                    <Box
+                      sx={{
+                        width: 40,
+                        height: 40,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: '50%',
+                        backgroundColor: '#1b1b1b',
+                        color: 'white',
+                        fontWeight: 'bold',
+                        textTransform: 'uppercase',
+                        marginRight: 2,
+                        cursor: 'pointer',
+                      }}
+                      onClick={() => {
+                        if (userType === 'Admin') {
+                          navigate('/admin');
+                        } else if (userType === 'User') {
+                          navigate('/user');
+                        }
+                      }}
+                    >
+                      {userInitial}
+                    </Box>
+                    <Button
+                      variant="outlined"
+                      sx={{ color: 'white', borderColor: 'white' }}
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </Button>
+                  </Box>
+                ) : (
+                  <Tab
+                    label="Sign Up"
+                    component={Link}
+                    to="/register"
+                    sx={{ color: 'white' }}
+                  />
+                )}
+              </Tabs>
+            </Box>
           </Box>
         </Toolbar>
       </AppBar>
