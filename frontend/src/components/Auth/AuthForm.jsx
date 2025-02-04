@@ -41,7 +41,6 @@ export default function AuthForm() {
 
     try {
       const res = await Signup(input, userType, secretKey);
-      console.log(res);
 
       if (userType === 'Admin') {
         alert(
@@ -67,17 +66,15 @@ export default function AuthForm() {
       const res = await Login(input, userType, secretKey);
       // localStorage.setItem("token", res.data.token);
       localStorage.setItem('token', res.token);
+      localStorage.setItem('userType', userType);
       localStorage.setItem('userEmail', input.email);
       localStorage.setItem('userName', res.user.name);
-      localStorage.setItem('userType', userType);
 
       if (userType === 'Admin') {
         localStorage.setItem('adminId', res.id);
       } else if (userType === 'User') {
         localStorage.setItem('userId', res.user._id);
       }
-      console.log('adminId', localStorage.getItem('adminId'));
-      console.log('userId', localStorage.getItem('userId'));
 
       navigate('/');
       window.location.reload();
