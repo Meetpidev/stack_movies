@@ -103,6 +103,9 @@ function Header() {
     localStorage.removeItem('userEmail');
     localStorage.removeItem('token');
     localStorage.removeItem('userType');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('adminId');
     navigate('/');
     window.location.reload();
   };
@@ -804,7 +807,6 @@ function Header() {
                             alignItems: 'center',
                             justifyContent: 'center',
                             borderRadius: '50%',
-                            backgroundColor: '#333',
                             color: 'white',
                             backgroundColor: '#1b1b1b',
                             fontWeight: 'bold',
