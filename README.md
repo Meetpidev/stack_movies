@@ -56,7 +56,7 @@ https://www.figma.com/design/iQTHGXtbTt9hlOS96ppC4F/movie?node-id=0-1&node-type=
 
 3. Note that both backend and frontend must be run at the same time.
 
-## To run the frontend application from Docker Hub, follow these steps:
+## To run the frontend application from Docker, follow these steps:
 
 1.  Pull the image:
     ```
