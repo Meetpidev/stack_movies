@@ -56,6 +56,21 @@ https://www.figma.com/design/iQTHGXtbTt9hlOS96ppC4F/movie?node-id=0-1&node-type=
 
 3. Note that both backend and frontend must be run at the same time.
 
+## To run the frontend application from Docker Hub, follow these steps:
+
+1.  Pull the image:
+    ```
+    docker pull meet44/flinkslick
+    ```
+
+2.  Run the container:
+    ```
+    docker run -p 5173:5173 meet44/flinkslick
+    ```
+
+   The application should be accessible at `http://localhost:5173`.
+   
+
 ### How to create Password
 
 1. Open Gmail.
