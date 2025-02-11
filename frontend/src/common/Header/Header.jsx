@@ -18,8 +18,21 @@ import MovieIcon from '@mui/icons-material/Movie';
 import LogoutIcon from '@mui/icons-material/Logout';
 import TheatersIcon from '@mui/icons-material/Theaters';
 import TheatersTwoToneIcon from '@mui/icons-material/TheatersTwoTone';
+import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
+import LanguageOutlinedIcon from '@mui/icons-material/LanguageOutlined';
+import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
+import OndemandVideoOutlinedIcon from '@mui/icons-material/OndemandVideoOutlined';
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
+import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
+import EventOutlinedIcon from '@mui/icons-material/EventOutlined';
+import EventBusyOutlinedIcon from '@mui/icons-material/EventBusyOutlined';
+import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
+import LocationCityOutlinedIcon from '@mui/icons-material/LocationCityOutlined';
+import ScheduleOutlinedIcon from '@mui/icons-material/ScheduleOutlined';
+import EventSeatOutlinedIcon from '@mui/icons-material/EventSeatOutlined';
+import AttachMoneyOutlinedIcon from '@mui/icons-material/AttachMoneyOutlined';
+import TitleOutlinedIcon from '@mui/icons-material/TitleOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
-import InputBase from '@mui/material/InputBase';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
@@ -27,15 +40,17 @@ import { useEffect } from 'react';
 import './Header.css';
 import {
   Alert,
-  alpha,
   Card,
   CardContent,
   Drawer,
-  Grid,
+  FormControl,
+  InputLabel,
   List,
   ListItem,
   Snackbar,
-  styled,
+  Step,
+  StepLabel,
+  Stepper,
   Typography,
 } from '@mui/material';
 import { getAllMovies } from '../../api/Movie_api/getAllmovie';
@@ -68,6 +83,7 @@ function Header() {
   const [query, setQuery] = useState('');
   const [movies, setMovies] = useState([]);
   const [filteredMovies, setFilteredMovies] = useState(movies);
+  const [page, setPage] = useState(0);
   const [newTimeSlot, setNewTimeSlot] = useState('');
   const userEmail = localStorage.getItem('userEmail') || '';
   const userName = localStorage.getItem('userName') || '';
@@ -76,9 +92,9 @@ function Header() {
   console.log('type', userType);
   const inputRef = useRef(null);
   const [openDrawer, setOpenDrawer] = useState(false); // Drawer state
-
+  const [isPage1Valid, setIsPage1Valid] = useState(false);
   const navigate = useNavigate();
-
+  const steps = ['Movie Details', 'Schedule Details'];
   const toggleDrawer = () => {
     setOpenDrawer(!openDrawer);
   };
@@ -90,6 +106,19 @@ function Header() {
     };
     fetchAllMovies();
   }, []);
+
+  useEffect(() => {
+    // Check if all required fields in Page 1 are filled
+    const { title, image, language, genre, director, trailer } = movie;
+    setIsPage1Valid(
+      title.trim() !== '' &&
+        image.trim() !== '' &&
+        language.trim() !== '' &&
+        genre.trim() !== '' &&
+        director.trim() !== '' &&
+        trailer.trim() !== ''
+    );
+  }, [movie]);
 
   useEffect(() => {
     document.body.style.inert =
@@ -112,19 +141,44 @@ function Header() {
 
   const handleOpenTheaterDialog = () => {
     setOpenTheaterDialog(true); // Open Theater dialog
-    setOpenDrawer(!openDrawer);
+    if (openDrawer) {
+      setOpenDrawer(!openDrawer);
+    }
   };
 
   const handleCloseTheaterDialog = () => {
+    setTheater({
+      name: '',
+      city: '',
+      ticketPrice: '',
+      seats: '',
+      image: '',
+    });
     setOpenTheaterDialog(false); // close Theater dialog
   };
 
   const handleOpenMovieDialog = () => {
     setOpenMovieDialog(true); // Open the movie dialog
-    setOpenDrawer(!openDrawer);
+    setPage(0);
+    if (openDrawer) {
+      setOpenDrawer(!openDrawer);
+    }
   };
 
   const handleCloseMovieDialog = () => {
+    setMovie({
+      title: '',
+      description: '',
+      language: '',
+      genre: '',
+      director: '',
+      duration: '',
+      startDate: '',
+      endDate: '',
+      image: '',
+      trailer: '',
+      timeSlots: [],
+    });
     setOpenMovieDialog(false); // Close the movie dialog
   };
 
@@ -229,13 +283,6 @@ function Header() {
       const result = await response.json();
       console.log('Theater added:', result);
 
-      setTheater({
-        name: '',
-        city: '',
-        ticketPrice: '',
-        seats: '',
-        image: '',
-      });
       handleCloseTheaterDialog();
     } catch (error) {
       console.error('Error:', error);
@@ -310,25 +357,15 @@ function Header() {
       const result = await response.json();
       console.log('Movie added:', result);
 
-      setMovie({
-        title: '',
-        description: '',
-        language: '',
-        genre: '',
-        director: '',
-        duration: '',
-        startDate: '',
-        endDate: '',
-        image: '',
-        trailer: '',
-        timeSlots: [],
-      });
       handleCloseMovieDialog();
     } catch (error) {
       console.error('Error:', error);
       alert(error.message);
     }
   };
+
+  const handleNext = () => setPage(1);
+  const handleBack = () => setPage(0);
 
   return (
     <>
@@ -726,15 +763,14 @@ function Header() {
                           fontSize: '16px',
                           alignSelf: 'start',
                           display: 'flex',
-                          marginBottom: '10px',
                           alignItems: 'center',
                           justifyContent: 'flex-start',
                           minHeight: '50px',
-                          paddingRight: '0px',
                           '&:hover': {
                             backgroundColor: '#fff',
                             scale: '1.05',
                             color: '#1b1b1b',
+                            width: '100%',
                           },
                           '&.Mui-selected': {
                             backgroundColor: 'blue',
@@ -1011,56 +1047,308 @@ function Header() {
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            name="name"
-            label="Name"
-            type="text"
-            style={{ width: '100%' }}
+          <FormControl
             variant="standard"
-            onChange={handleTheaterChange}
-          />
-          <TextField
-            margin="dense"
-            name="city"
-            label="City"
-            type="text"
-            style={{ width: '100%' }}
+            sx={{ width: '100%', marginTop: '10px', position: 'relative' }}
+          >
+            <InputLabel
+              shrink
+              htmlFor="bootstrap-input"
+              sx={{
+                fontSize: '25px',
+                fontWeight: 'bold',
+                color: '#333',
+              }}
+            >
+              Name
+            </InputLabel>
+            <TextField
+              autoFocus
+              margin="dense"
+              name="name"
+              type="text"
+              placeholder="Enter Name"
+              sx={{
+                width: '100%',
+                mt: 3,
+                '& .MuiInputBase-input': {
+                  padding: '8px 12px 8px 40px',
+                  fontSize: '20px',
+                  borderRadius: '5px',
+                  border: '2px solid #ccc',
+                  transition: 'border-color 0.3s',
+                  '&:focus': {
+                    borderColor: '#007bff',
+                    outline: 'none',
+                  },
+                },
+                '& .MuiInput-underline:before': {
+                  borderBottom: 'none',
+                },
+                '& .MuiInput-underline:after': {
+                  borderBottom: 'none',
+                },
+              }}
+              variant="standard"
+              onChange={handleTheaterChange}
+            />
+            <PersonOutlinedIcon
+              sx={{
+                position: 'absolute',
+                left: '10px', // Position inside the field
+                top: '63%',
+                transform: 'translateY(-50%)',
+                color: '#666',
+                fontSize: '25px',
+              }}
+            />
+          </FormControl>
+          <FormControl
             variant="standard"
-            onChange={handleTheaterChange}
-          />
-          <TextField
-            margin="dense"
-            name="ticketPrice"
-            label="Ticket Price"
-            type="number"
-            style={{ width: '100%' }}
+            sx={{ width: '100%', marginTop: '10px', position: 'relative' }}
+          >
+            <InputLabel
+              shrink
+              htmlFor="bootstrap-input"
+              sx={{
+                fontSize: '25px',
+                fontWeight: 'bold',
+                color: '#333',
+              }}
+            >
+              City
+            </InputLabel>
+            <TextField
+              autoFocus
+              margin="dense"
+              name="city"
+              type="text"
+              placeholder="City"
+              sx={{
+                width: '100%',
+                mt: 3,
+                '& .MuiInputBase-input': {
+                  padding: '8px 12px 8px 40px',
+                  fontSize: '20px',
+                  borderRadius: '5px',
+                  border: '2px solid #ccc',
+                  transition: 'border-color 0.3s',
+                  '&:focus': {
+                    borderColor: '#007bff',
+                    outline: 'none',
+                  },
+                },
+                '& .MuiInput-underline:before': {
+                  borderBottom: 'none',
+                },
+                '& .MuiInput-underline:after': {
+                  borderBottom: 'none',
+                },
+              }}
+              variant="standard"
+              onChange={handleTheaterChange}
+            />
+            <LocationCityOutlinedIcon
+              sx={{
+                position: 'absolute',
+                left: '10px', // Position inside the field
+                top: '63%',
+                transform: 'translateY(-50%)',
+                color: '#666',
+                fontSize: '25px',
+              }}
+            />
+          </FormControl>
+
+          <FormControl
             variant="standard"
-            onChange={handleTheaterChange}
-          />
-          <TextField
-            margin="dense"
-            name="seats"
-            label="Seats"
-            type="text"
-            style={{ width: '100%' }}
+            sx={{ width: '100%', marginTop: '10px', position: 'relative' }}
+          >
+            <InputLabel
+              shrink
+              htmlFor="bootstrap-input"
+              sx={{
+                fontSize: '25px',
+                fontWeight: 'bold',
+                color: '#333',
+              }}
+            >
+              Ticket Price
+            </InputLabel>
+            <TextField
+              autoFocus
+              margin="dense"
+              name="ticketPrice"
+              type="number"
+              placeholder="Ticket Price"
+              sx={{
+                width: '100%',
+                mt: 3,
+                '& .MuiInputBase-input': {
+                  padding: '8px 12px 8px 40px',
+                  fontSize: '20px',
+                  borderRadius: '5px',
+                  border: '2px solid #ccc',
+                  transition: 'border-color 0.3s',
+                  '&:focus': {
+                    borderColor: '#007bff',
+                    outline: 'none',
+                  },
+                },
+                '& .MuiInput-underline:before': {
+                  borderBottom: 'none',
+                },
+                '& .MuiInput-underline:after': {
+                  borderBottom: 'none',
+                },
+              }}
+              variant="standard"
+              onChange={handleTheaterChange}
+            />
+            <AttachMoneyOutlinedIcon
+              sx={{
+                position: 'absolute',
+                left: '10px', // Position inside the field
+                top: '63%',
+                transform: 'translateY(-50%)',
+                color: '#666',
+                fontSize: '25px',
+              }}
+            />
+          </FormControl>
+
+          <FormControl
             variant="standard"
-            onChange={handleTheaterChange}
-          />
-          <TextField
-            margin="dense"
-            name="image"
-            label="Image URL"
-            type="text"
-            style={{ width: '100%' }}
+            sx={{ width: '100%', marginTop: '10px', position: 'relative' }}
+          >
+            <InputLabel
+              shrink
+              htmlFor="bootstrap-input"
+              sx={{
+                fontSize: '25px',
+                fontWeight: 'bold',
+                color: '#333',
+              }}
+            >
+              Seats
+            </InputLabel>
+            <TextField
+              autoFocus
+              margin="dense"
+              name="seats"
+              type="text"
+              placeholder="Seats"
+              sx={{
+                width: '100%',
+                mt: 3,
+                '& .MuiInputBase-input': {
+                  padding: '8px 12px 8px 40px',
+                  fontSize: '20px',
+                  borderRadius: '5px',
+                  border: '2px solid #ccc',
+                  transition: 'border-color 0.3s',
+                  '&:focus': {
+                    borderColor: '#007bff',
+                    outline: 'none',
+                  },
+                },
+                '& .MuiInput-underline:before': {
+                  borderBottom: 'none',
+                },
+                '& .MuiInput-underline:after': {
+                  borderBottom: 'none',
+                },
+              }}
+              variant="standard"
+              onChange={handleTheaterChange}
+            />
+            <EventSeatOutlinedIcon
+              sx={{
+                position: 'absolute',
+                left: '10px', // Position inside the field
+                top: '63%',
+                transform: 'translateY(-50%)',
+                color: '#666',
+                fontSize: '25px',
+              }}
+            />
+          </FormControl>
+          <FormControl
             variant="standard"
-            onChange={handleTheaterChange}
-          />
+            sx={{ width: '100%', marginTop: '10px', position: 'relative' }}
+          >
+            <InputLabel
+              shrink
+              htmlFor="bootstrap-input"
+              sx={{
+                fontSize: '25px',
+                fontWeight: 'bold',
+                color: '#333',
+              }}
+            >
+              Image URL *
+            </InputLabel>
+            <TextField
+              autoFocus
+              margin="dense"
+              name="image"
+              type="text"
+              placeholder="Image URL"
+              sx={{
+                width: '100%',
+                mt: 3,
+                '& .MuiInputBase-input': {
+                  padding: '8px 12px 8px 40px',
+                  fontSize: '20px',
+                  borderRadius: '5px',
+                  border: '2px solid #ccc',
+                  transition: 'border-color 0.3s',
+                  '&:focus': {
+                    borderColor: '#007bff',
+                    outline: 'none',
+                  },
+                },
+                '& .MuiInput-underline:before': {
+                  borderBottom: 'none',
+                },
+                '& .MuiInput-underline:after': {
+                  borderBottom: 'none',
+                },
+              }}
+              variant="standard"
+              onChange={handleTheaterChange}
+            />
+            <ImageOutlinedIcon
+              sx={{
+                position: 'absolute',
+                left: '10px',
+                top: '63%',
+                transform: 'translateY(-50%)',
+                color: '#666',
+                fontSize: '25px',
+              }}
+            />
+          </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseTheaterDialog}>Cancel</Button>
-          <Button onClick={handleSaveTheater}>Save</Button>
+          <Button
+            onClick={handleCloseTheaterDialog}
+            sx={{
+              backgroundColor: 'blue',
+              color: 'white',
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSaveTheater}
+            sx={{
+              backgroundColor: 'blue',
+              color: 'white',
+            }}
+          >
+            Save
+          </Button>
         </DialogActions>
       </Dialog>
       {/* Movie Dialog */}
@@ -1082,121 +1370,784 @@ function Header() {
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            name="title"
-            label="Title"
-            type="text"
-            style={{ width: '100%' }}
-            variant="standard"
-            onChange={handleMovieChange}
-          />
-          <TextField
-            margin="dense"
-            name="image"
-            label="Image URL"
-            type="text"
-            style={{ width: '100%' }}
-            variant="standard"
-            onChange={handleMovieChange}
-          />
-          <TextField
-            margin="dense"
-            name="language"
-            label="Language"
-            type="text"
-            style={{ width: '100%' }}
-            variant="standard"
-            onChange={handleMovieChange}
-          />
-          <TextField
-            margin="dense"
-            name="genre"
-            label="Genre"
-            type="text"
-            style={{ width: '100%' }}
-            variant="standard"
-            onChange={handleMovieChange}
-          />
-          <TextField
-            margin="dense"
-            name="director"
-            label="Director"
-            type="text"
-            style={{ width: '100%' }}
-            variant="standard"
-            onChange={handleMovieChange}
-          />
-          <TextField
-            margin="dense"
-            name="trailer"
-            label="Trailer URL"
-            type="text"
-            style={{ width: '100%' }}
-            variant="standard"
-            onChange={handleMovieChange}
-          />
-          <TextField
-            margin="dense"
-            name="description"
-            label="Description"
-            type="text"
-            style={{ width: '100%' }}
-            variant="standard"
-            onChange={handleMovieChange}
-          />
-          <TextField
-            margin="dense"
-            name="duration"
-            label="Duration (in minutes)"
-            type="number"
-            style={{ width: '100%' }}
-            variant="standard"
-            onChange={handleMovieChange}
-          />
-          <TextField
-            margin="dense"
-            name="startDate"
-            label="Start Date"
-            type="date"
-            style={{ width: '100%' }}
-            variant="standard"
-            InputLabelProps={{ shrink: true }}
-            onChange={handleMovieChange}
-          />
-          <TextField
-            margin="dense"
-            name="endDate"
-            label="End Date"
-            type="date"
-            style={{ width: '100%' }}
-            variant="standard"
-            InputLabelProps={{ shrink: true }}
-            onChange={handleMovieChange}
-          />
-        </DialogContent>
+          {/* Stepper Progress Indicator */}
+          <Stepper activeStep={page} alternativeLabel>
+            {steps.map((label, index) => (
+              <Step key={index}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+          {/* Page 1: Movie Details */}
+          {page === 0 && (
+            <>
+              <FormControl
+                variant="standard"
+                sx={{
+                  width: '100%',
+                  marginTop: '10px',
+                  position: 'relative',
+                }}
+              >
+                <InputLabel
+                  shrink
+                  htmlFor="bootstrap-input"
+                  sx={{
+                    fontSize: '25px',
+                    fontWeight: 'bold',
+                    color: '#333',
+                  }}
+                >
+                  Title
+                </InputLabel>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  name="title"
+                  type="text"
+                  placeholder="Title"
+                  sx={{
+                    width: '100%',
+                    mt: 3,
+                    '& .MuiInputBase-input': {
+                      padding: '8px 12px 8px 40px',
+                      fontSize: '20px',
+                      borderRadius: '5px',
+                      border: '2px solid #ccc',
+                      transition: 'border-color 0.3s',
+                      '&:focus': {
+                        borderColor: '#007bff',
+                        outline: 'none',
+                      },
+                    },
+                    '& .MuiInput-underline:before': {
+                      borderBottom: 'none',
+                    },
+                    '& .MuiInput-underline:after': {
+                      borderBottom: 'none',
+                    },
+                  }}
+                  variant="standard"
+                  value={movie.title}
+                  onChange={handleMovieChange}
+                />
+                <TitleOutlinedIcon
+                  sx={{
+                    position: 'absolute',
+                    left: '10px', // Position inside the field
+                    top: '63%',
+                    transform: 'translateY(-50%)',
+                    color: '#666',
+                    fontSize: '25px',
+                  }}
+                />
+              </FormControl>
+              <FormControl
+                variant="standard"
+                sx={{
+                  width: '100%',
+                  marginTop: '10px',
+                  position: 'relative',
+                }}
+              >
+                <InputLabel
+                  shrink
+                  htmlFor="bootstrap-input"
+                  sx={{
+                    fontSize: '25px',
+                    fontWeight: 'bold',
+                    color: '#333',
+                  }}
+                >
+                  Image URL
+                </InputLabel>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  name="image"
+                  value={movie.image}
+                  type="text"
+                  placeholder="Image URL"
+                  sx={{
+                    width: '100%',
+                    mt: 3,
+                    '& .MuiInputBase-input': {
+                      padding: '8px 12px 8px 40px',
+                      fontSize: '20px',
+                      borderRadius: '5px',
+                      border: '2px solid #ccc',
+                      transition: 'border-color 0.3s',
+                      '&:focus': {
+                        borderColor: '#007bff',
+                        outline: 'none',
+                      },
+                    },
+                    '& .MuiInput-underline:before': {
+                      borderBottom: 'none',
+                    },
+                    '& .MuiInput-underline:after': {
+                      borderBottom: 'none',
+                    },
+                  }}
+                  variant="standard"
+                  onChange={handleMovieChange}
+                />
+                <ImageOutlinedIcon
+                  sx={{
+                    position: 'absolute',
+                    left: '10px', // Position inside the field
+                    top: '63%',
+                    transform: 'translateY(-50%)',
+                    color: '#666',
+                    fontSize: '25px',
+                  }}
+                />
+              </FormControl>
+              <FormControl
+                variant="standard"
+                sx={{
+                  width: '100%',
+                  marginTop: '10px',
+                  position: 'relative',
+                }}
+              >
+                <InputLabel
+                  shrink
+                  htmlFor="bootstrap-input"
+                  sx={{
+                    fontSize: '25px',
+                    fontWeight: 'bold',
+                    color: '#333',
+                  }}
+                >
+                  Language
+                </InputLabel>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  name="language"
+                  value={movie.language}
+                  type="text"
+                  placeholder="Language"
+                  sx={{
+                    width: '100%',
+                    mt: 3,
+                    '& .MuiInputBase-input': {
+                      padding: '8px 12px 8px 40px',
+                      fontSize: '20px',
+                      borderRadius: '5px',
+                      border: '2px solid #ccc',
+                      transition: 'border-color 0.3s',
+                      '&:focus': {
+                        borderColor: '#007bff',
+                        outline: 'none',
+                      },
+                    },
+                    '& .MuiInput-underline:before': {
+                      borderBottom: 'none',
+                    },
+                    '& .MuiInput-underline:after': {
+                      borderBottom: 'none',
+                    },
+                  }}
+                  variant="standard"
+                  onChange={handleMovieChange}
+                />
+                <LanguageOutlinedIcon
+                  sx={{
+                    position: 'absolute',
+                    left: '10px', // Position inside the field
+                    top: '63%',
+                    transform: 'translateY(-50%)',
+                    color: '#666',
+                    fontSize: '25px',
+                  }}
+                />
+              </FormControl>
+              <FormControl
+                variant="standard"
+                sx={{
+                  width: '100%',
+                  marginTop: '10px',
+                  position: 'relative',
+                }}
+              >
+                <InputLabel
+                  shrink
+                  htmlFor="bootstrap-input"
+                  sx={{
+                    fontSize: '25px',
+                    fontWeight: 'bold',
+                    color: '#333',
+                  }}
+                >
+                  Genre
+                </InputLabel>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  name="genre"
+                  value={movie.genre}
+                  type="text"
+                  placeholder="Genre"
+                  sx={{
+                    width: '100%',
+                    mt: 3,
+                    '& .MuiInputBase-input': {
+                      padding: '8px 12px 8px 40px',
+                      fontSize: '20px',
+                      borderRadius: '5px',
+                      border: '2px solid #ccc',
+                      transition: 'border-color 0.3s',
+                      '&:focus': {
+                        borderColor: '#007bff',
+                        outline: 'none',
+                      },
+                    },
+                    '& .MuiInput-underline:before': {
+                      borderBottom: 'none',
+                    },
+                    '& .MuiInput-underline:after': {
+                      borderBottom: 'none',
+                    },
+                  }}
+                  variant="standard"
+                  onChange={handleMovieChange}
+                />
+                <CategoryOutlinedIcon
+                  sx={{
+                    position: 'absolute',
+                    left: '10px', // Position inside the field
+                    top: '63%',
+                    transform: 'translateY(-50%)',
+                    color: '#666',
+                    fontSize: '25px',
+                  }}
+                />
+              </FormControl>
+              <FormControl
+                variant="standard"
+                sx={{
+                  width: '100%',
+                  marginTop: '10px',
+                  position: 'relative',
+                }}
+              >
+                <InputLabel
+                  shrink
+                  htmlFor="bootstrap-input"
+                  sx={{
+                    fontSize: '25px',
+                    fontWeight: 'bold',
+                    color: '#333',
+                  }}
+                >
+                  Director
+                </InputLabel>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  name="director"
+                  value={movie.director}
+                  type="text"
+                  placeholder="Director"
+                  sx={{
+                    width: '100%',
+                    mt: 3,
+                    '& .MuiInputBase-input': {
+                      padding: '8px 12px 8px 40px',
+                      fontSize: '20px',
+                      borderRadius: '5px',
+                      border: '2px solid #ccc',
+                      transition: 'border-color 0.3s',
+                      '&:focus': {
+                        borderColor: '#007bff',
+                        outline: 'none',
+                      },
+                    },
+                    '& .MuiInput-underline:before': {
+                      borderBottom: 'none',
+                    },
+                    '& .MuiInput-underline:after': {
+                      borderBottom: 'none',
+                    },
+                  }}
+                  variant="standard"
+                  onChange={handleMovieChange}
+                />
+                <PersonOutlinedIcon
+                  sx={{
+                    position: 'absolute',
+                    left: '10px', // Position inside the field
+                    top: '63%',
+                    transform: 'translateY(-50%)',
+                    color: '#666',
+                    fontSize: '25px',
+                  }}
+                />
+              </FormControl>
+              <FormControl
+                variant="standard"
+                sx={{
+                  width: '100%',
+                  marginTop: '10px',
+                  position: 'relative',
+                }}
+              >
+                <InputLabel
+                  shrink
+                  htmlFor="bootstrap-input"
+                  sx={{
+                    fontSize: '25px',
+                    fontWeight: 'bold',
+                    color: '#333',
+                  }}
+                >
+                  Trailer URL
+                </InputLabel>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  name="trailer"
+                  value={movie.trailer}
+                  type="text"
+                  placeholder="Trailer URL"
+                  sx={{
+                    width: '100%',
+                    mt: 3,
+                    '& .MuiInputBase-input': {
+                      padding: '8px 12px 8px 40px',
+                      fontSize: '20px',
+                      borderRadius: '5px',
+                      border: '2px solid #ccc',
+                      transition: 'border-color 0.3s',
+                      '&:focus': {
+                        borderColor: '#007bff',
+                        outline: 'none',
+                      },
+                    },
+                    '& .MuiInput-underline:before': {
+                      borderBottom: 'none',
+                    },
+                    '& .MuiInput-underline:after': {
+                      borderBottom: 'none',
+                    },
+                  }}
+                  variant="standard"
+                  onChange={handleMovieChange}
+                />
+                <OndemandVideoOutlinedIcon
+                  sx={{
+                    position: 'absolute',
+                    left: '10px', // Position inside the field
+                    top: '63%',
+                    transform: 'translateY(-50%)',
+                    color: '#666',
+                    fontSize: '25px',
+                  }}
+                />
+              </FormControl>
+            </>
+          )}
+          {/* Page 2: Schedule Details */}
+          {page === 1 && (
+            <>
+              <FormControl
+                variant="standard"
+                sx={{
+                  width: '100%',
+                  marginTop: '10px',
+                  position: 'relative',
+                }}
+              >
+                <InputLabel
+                  shrink
+                  htmlFor="bootstrap-input"
+                  sx={{
+                    fontSize: '25px',
+                    fontWeight: 'bold',
+                    color: '#333',
+                  }}
+                >
+                  Description
+                </InputLabel>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  name="description"
+                  value={movie.description}
+                  type="text"
+                  placeholder="Description"
+                  sx={{
+                    width: '100%',
+                    mt: 3,
+                    '& .MuiInputBase-input': {
+                      padding: '8px 12px 8px 40px',
+                      fontSize: '20px',
+                      borderRadius: '5px',
+                      border: '2px solid #ccc',
+                      transition: 'border-color 0.3s',
+                      '&:focus': {
+                        borderColor: '#007bff',
+                        outline: 'none',
+                      },
+                    },
+                    '& .MuiInput-underline:before': {
+                      borderBottom: 'none',
+                    },
+                    '& .MuiInput-underline:after': {
+                      borderBottom: 'none',
+                    },
+                  }}
+                  variant="standard"
+                  onChange={handleMovieChange}
+                />
+                <DescriptionOutlinedIcon
+                  sx={{
+                    position: 'absolute',
+                    left: '10px', // Position inside the field
+                    top: '63%',
+                    transform: 'translateY(-50%)',
+                    color: '#666',
+                    fontSize: '25px',
+                  }}
+                />
+              </FormControl>
+              <FormControl
+                variant="standard"
+                sx={{
+                  width: '100%',
+                  marginTop: '10px',
+                  position: 'relative',
+                }}
+              >
+                <InputLabel
+                  shrink
+                  htmlFor="bootstrap-input"
+                  sx={{
+                    fontSize: '25px',
+                    fontWeight: 'bold',
+                    color: '#333',
+                  }}
+                >
+                  Duration (in minutes)
+                </InputLabel>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  name="duration"
+                  value={movie.duration}
+                  type="number"
+                  placeholder="Duration (in minutes)"
+                  sx={{
+                    width: '100%',
+                    mt: 3,
+                    '& .MuiInputBase-input': {
+                      padding: '8px 12px 8px 40px',
+                      fontSize: '20px',
+                      borderRadius: '5px',
+                      border: '2px solid #ccc',
+                      transition: 'border-color 0.3s',
+                      '&:focus': {
+                        borderColor: '#007bff',
+                        outline: 'none',
+                      },
+                    },
+                    '& .MuiInput-underline:before': {
+                      borderBottom: 'none',
+                    },
+                    '& .MuiInput-underline:after': {
+                      borderBottom: 'none',
+                    },
+                  }}
+                  variant="standard"
+                  onChange={handleMovieChange}
+                />
+                <AccessTimeOutlinedIcon
+                  sx={{
+                    position: 'absolute',
+                    left: '10px', // Position inside the field
+                    top: '63%',
+                    transform: 'translateY(-50%)',
+                    color: '#666',
+                    fontSize: '25px',
+                  }}
+                />
+              </FormControl>
 
-        {/* Time Slots Section */}
-        <TextField
-          margin="dense"
-          label="Add Time Slot"
-          type="text"
-          style={{ width: '100%' }}
-          variant="standard"
-          value={newTimeSlot}
-          onChange={(e) => setNewTimeSlot(e.target.value)}
-        />
-        <Button onClick={handleAddTimeSlot}>Add Time Slot</Button>
-        <Box>
-          {movie.timeSlots.map((slot, index) => (
-            <Box key={index}>{slot}</Box>
-          ))}
-        </Box>
-        <DialogActions>
-          <Button onClick={handleCloseMovieDialog}>Cancel</Button>
-          <Button onClick={handleSaveMovie}>Save</Button>
-        </DialogActions>
+              <FormControl
+                variant="standard"
+                sx={{
+                  width: '100%',
+                  marginTop: '10px',
+                  position: 'relative',
+                }}
+              >
+                <InputLabel
+                  shrink
+                  htmlFor="bootstrap-input"
+                  sx={{
+                    fontSize: '25px',
+                    fontWeight: 'bold',
+                    color: '#333',
+                  }}
+                >
+                  Start Date
+                </InputLabel>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  name="startDate"
+                  value={movie.startDate}
+                  type="date"
+                  placeholder="Start Date"
+                  sx={{
+                    width: '100%',
+                    mt: 3,
+                    '& .MuiInputBase-input': {
+                      padding: '8px 12px 8px 40px',
+                      fontSize: '20px',
+                      borderRadius: '5px',
+                      border: '2px solid #ccc',
+                      transition: 'border-color 0.3s',
+                      '&:focus': {
+                        borderColor: '#007bff',
+                        outline: 'none',
+                      },
+                    },
+                    '& .MuiInput-underline:before': {
+                      borderBottom: 'none',
+                    },
+                    '& .MuiInput-underline:after': {
+                      borderBottom: 'none',
+                    },
+                  }}
+                  variant="standard"
+                  InputLabelProps={{ shrink: true }}
+                  onChange={handleMovieChange}
+                />
+                <EventOutlinedIcon
+                  sx={{
+                    position: 'absolute',
+                    left: '10px', // Position inside the field
+                    top: '63%',
+                    transform: 'translateY(-50%)',
+                    color: '#666',
+                    fontSize: '25px',
+                  }}
+                />
+              </FormControl>
+
+              <FormControl
+                variant="standard"
+                sx={{
+                  width: '100%',
+                  marginTop: '10px',
+                  position: 'relative',
+                }}
+              >
+                <InputLabel
+                  shrink
+                  htmlFor="bootstrap-input"
+                  sx={{
+                    fontSize: '25px',
+                    fontWeight: 'bold',
+                    color: '#333',
+                  }}
+                >
+                  End Date
+                </InputLabel>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  name="endDate"
+                  value={movie.endDate}
+                  type="date"
+                  placeholder="End Date"
+                  sx={{
+                    width: '100%',
+                    mt: 3,
+                    '& .MuiInputBase-input': {
+                      padding: '8px 12px 8px 40px',
+                      fontSize: '20px',
+                      borderRadius: '5px',
+                      border: '2px solid #ccc',
+                      transition: 'border-color 0.3s',
+                      '&:focus': {
+                        borderColor: '#007bff',
+                        outline: 'none',
+                      },
+                    },
+                    '& .MuiInput-underline:before': {
+                      borderBottom: 'none',
+                    },
+                    '& .MuiInput-underline:after': {
+                      borderBottom: 'none',
+                    },
+                  }}
+                  variant="standard"
+                  InputLabelProps={{ shrink: true }}
+                  onChange={handleMovieChange}
+                />
+                <EventBusyOutlinedIcon
+                  sx={{
+                    position: 'absolute',
+                    left: '10px', // Position inside the field
+                    top: '63%',
+                    transform: 'translateY(-50%)',
+                    color: '#666',
+                    fontSize: '25px',
+                  }}
+                />
+              </FormControl>
+
+              {/* Time Slots Section */}
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  width: '100%',
+                  mt: 1,
+                }}
+              >
+                <FormControl
+                  variant="standard"
+                  sx={{
+                    flex: 1,
+                    position: 'relative',
+                  }}
+                >
+                  <InputLabel
+                    shrink
+                    htmlFor="time-slot-input"
+                    sx={{
+                      fontSize: '25px',
+                      fontWeight: 'bold',
+                      color: '#333',
+                      marginBottom: '5px',
+                      marginLeft: '5px',
+                    }}
+                  >
+                    Add Time Slot *
+                  </InputLabel>
+                  <TextField
+                    id="time-slot-input"
+                    autoFocus
+                    margin="dense"
+                    name="timeSlot"
+                    type="text"
+                    placeholder="Add Time Slot"
+                    variant="standard"
+                    value={newTimeSlot}
+                    onChange={(e) => setNewTimeSlot(e.target.value)}
+                    sx={{
+                      width: '100%',
+                      mt: 3,
+                      '& input': {
+                        padding: '8px 12px 8px 40px',
+                        fontSize: '20px',
+                        borderRadius: '5px',
+                        border: '2px solid #ccc',
+                        transition: 'border-color 0.3s ease',
+                        '&:focus': {
+                          borderColor: '#007bff',
+                          outline: 'none',
+                        },
+                      },
+                      '& .MuiInput-underline:before': { borderBottom: 'none' },
+                      '& .MuiInput-underline:after': { borderBottom: 'none' },
+                    }}
+                  />
+                  {/* Clock Icon Inside Input */}
+                  <ScheduleOutlinedIcon
+                    sx={{
+                      position: 'absolute',
+                      left: '10px',
+                      top: '63%',
+                      transform: 'translateY(-50%)',
+                      color: '#666',
+                      fontSize: '25px',
+                    }}
+                  />
+                </FormControl>
+
+                {/* Add Time Slot Button */}
+                <Button
+                  onClick={handleAddTimeSlot}
+                  sx={{
+                    mt: 2.5,
+                    backgroundColor: '#007bff',
+                    color: 'white',
+                    padding: '10px 10px',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    textTransform: 'none',
+                    borderRadius: '5px',
+                    '&:hover': {
+                      backgroundColor: '#0056b3',
+                    },
+                  }}
+                >
+                  Add Time Slot
+                </Button>
+              </Box>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                {movie.timeSlots.map((slot, index) => (
+                  <Box
+                    key={index}
+                    sx={{
+                      fontSize: '18px',
+                    }}
+                  >
+                    {slot}
+                  </Box>
+                ))}
+              </Box>
+              <DialogActions>
+                <Button
+                  onClick={handleCloseMovieDialog}
+                  sx={{
+                    backgroundColor: 'blue',
+                    color: 'white',
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleSaveMovie}
+                  sx={{
+                    backgroundColor: 'blue',
+                    color: 'white',
+                  }}
+                >
+                  Save
+                </Button>
+              </DialogActions>
+            </>
+          )}
+          {/* Pagination Buttons */}
+          <Box sx={{ marginTop: 3 }}>
+            {page === 1 && (
+              <Button
+                variant="contained"
+                onClick={handleBack}
+                sx={{ marginRight: 2 }}
+              >
+                Back
+              </Button>
+            )}
+            {page === 0 && (
+              <Button
+                variant="contained"
+                onClick={handleNext}
+                disabled={!isPage1Valid}
+              >
+                Next
+              </Button>
+            )}
+          </Box>
+        </DialogContent>
       </Dialog>
     </>
   );
