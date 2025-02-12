@@ -25,6 +25,9 @@ import OndemandVideoOutlinedIcon from '@mui/icons-material/OndemandVideoOutlined
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 import EventOutlinedIcon from '@mui/icons-material/EventOutlined';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import CheckIcon from '@mui/icons-material/Check';
 import EventBusyOutlinedIcon from '@mui/icons-material/EventBusyOutlined';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import LocationCityOutlinedIcon from '@mui/icons-material/LocationCityOutlined';
@@ -93,6 +96,8 @@ function Header() {
   const inputRef = useRef(null);
   const [openDrawer, setOpenDrawer] = useState(false); // Drawer state
   const [isPage1Valid, setIsPage1Valid] = useState(false);
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [editedTime, setEditedTime] = useState('');
   const navigate = useNavigate();
   const steps = ['Movie Details', 'Schedule Details'];
   const toggleDrawer = () => {
@@ -366,6 +371,24 @@ function Header() {
 
   const handleNext = () => setPage(1);
   const handleBack = () => setPage(0);
+
+  const handleDeleteTimeSlot = (index) => {
+    const updatedSlots = movie.timeSlots.filter((_, i) => i !== index);
+    setMovie({ ...movie, timeSlots: updatedSlots }); // Update movie state
+  };
+
+  const handleEdit = (index, slot) => {
+    setEditingIndex(index);
+    setEditedTime(slot);
+  };
+
+  const handleSaveEdit = (index) => {
+    if (!editedTime) return; // Prevent empty values
+    const updatedSlots = [...movie.timeSlots];
+    updatedSlots[index] = editedTime;
+    setMovie({ ...movie, timeSlots: updatedSlots }); // Update movie state
+    setEditingIndex(null);
+  };
 
   return (
     <>
@@ -2098,12 +2121,52 @@ function Header() {
                     key={index}
                     sx={{
                       fontSize: '18px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      border: '1px solid #ccc',
+                      padding: '5px',
+                      borderRadius: '4px',
                     }}
                   >
-                    {slot}
+                    {editingIndex === index ? (
+                      <TextField
+                        size="small"
+                        type="time"
+                        value={editedTime}
+                        onChange={(e) => setEditedTime(e.target.value)}
+                        sx={{ maxWidth: '100px' }}
+                      />
+                    ) : (
+                      <span>{slot}</span>
+                    )}
+
+                    {editingIndex === index ? (
+                      <IconButton
+                        size="small"
+                        onClick={() => handleSaveEdit(index)}
+                      >
+                        <CheckIcon fontSize="small" color="success" />
+                      </IconButton>
+                    ) : (
+                      <IconButton
+                        size="small"
+                        onClick={() => handleEdit(index, slot)}
+                      >
+                        <EditIcon fontSize="small" />
+                      </IconButton>
+                    )}
+
+                    <IconButton
+                      size="small"
+                      onClick={() => handleDeleteTimeSlot(index)}
+                    >
+                      <DeleteIcon fontSize="small" color="error" />
+                    </IconButton>
                   </Box>
                 ))}
               </Box>
+
               <DialogActions>
                 <Button
                   onClick={handleCloseMovieDialog}
