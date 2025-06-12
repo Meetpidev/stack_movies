@@ -84,3 +84,48 @@
 .movie-buttons button:hover {
   background-color: #e64a19;
 }
+.custom-select {
+  height: 48px; /* Increase this value for taller select box */
+  font-size: 1rem;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  background-color: #fdfdfd;
+}
+
+.movie-page {
+  padding: 2rem;
+}
+
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1.5rem;
+  justify-items: center;
+  padding: 1rem;
+}
+
+.movie-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  width: 160px;
+  text-align: center;
+}
+
+.movie-card-header {
+  height: 240px;
+  overflow: hidden;
+}
+
+.movie-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.movie-card-footer {
+  padding: 0.5rem;
+}

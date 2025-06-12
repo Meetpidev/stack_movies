@@ -33,7 +33,7 @@ const HomePage = () => {
       <Upcomming items={items} title='Upcomming Movies' showAdditionalButtons={false} />
       <Upcomming items={item} title='Latest Movies' showAdditionalButtons={false} />
       <Trending items={item} />
-      <Upcomming items={rec} title='Recommended Movies' showAdditionalButtons={false} />
+      {/* <Upcomming items={rec} title='Recommended Movies' showAdditionalButtons={false} /> */}
     </>
   );
 };
