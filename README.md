@@ -3,9 +3,6 @@ A comprehensive full-stack movie management system built with React.js for the f
 # Movies Web
 https://stack-movies.vercel.app/
 
-# Figma design
-https://www.figma.com/design/iQTHGXtbTt9hlOS96ppC4F/movie?node-id=0-1&node-type=CANVAS&t=Z0hkatbXGouFZOEM-0
-
 ## Setup
 
 1. Clone the repository:
